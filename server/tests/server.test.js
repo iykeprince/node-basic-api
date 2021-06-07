@@ -4,6 +4,7 @@ const { ObjectID } = require('mongodb')
 
 const { app } = require('./../server')
 const { Todo } = require('./../models/todo')
+const { User } = require('../models/user')
 
 const todos = [
     { _id: new ObjectID(),  text: 'First test todo' },
@@ -82,5 +83,31 @@ describe('GET /todos/:id', () => {
                 expect(res.body.todo.text).toBe(todos[0].text);
             })
             .end(done)
+    });
+});
+
+describe('POST /users/login', () => {
+    it('should login user and return auth token', (done) => {
+        request(app)
+            .post('/users/login')
+            .send({
+                email: users[1].email,
+                password: users[1].password
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.headers['x-auth']).toExist();
+            })
+            .end((err, res) => {
+                if(err){
+                    return done(err)
+                }
+
+              done()
+            } );
+    });
+
+    it('should reject invalid login', (done) => {
+
     });
 });
